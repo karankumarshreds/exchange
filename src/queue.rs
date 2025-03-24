@@ -1,5 +1,10 @@
-use std::{collections::{HashMap, VecDeque}, default::Default};
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
+use std::{
+    collections::{HashMap, VecDeque},
+    default::Default,
+};
+
+// client -> (queue_name) -> (collect client)
 
 pub struct Queue {
     queues: HashMap<String, VecDeque<String>>,
@@ -7,21 +12,31 @@ pub struct Queue {
 
 impl Queue {
     pub fn new() -> Queue {
-        return Queue { queues: HashMap::new() }
+        return Queue {
+            queues: HashMap::new(),
+        };
     }
 
-    pub fn add(&mut self, q_name: String) -> Result<()> {
+    /// adds a new queue with default queue
+    fn create(&mut self, q_name: String) -> Result<()> {
         self.queues.entry(q_name).or_insert(Default::default());
         Ok(())
     }
 
-    pub fn push(&mut self, q_name: String, value: String) ->Result<()> {
-        self.queues.get_mut(&q_name).context("Invalid queue name, queue not found")?.push_back(value);
+    pub fn push(&mut self, q_name: String, payload: String) -> Result<()> {
+        // straight forward way
+        self.queues
+            .entry(q_name.clone())
+            .or_default()
+            .push_back(payload);
+        println!("Pushed to queue: {:#?}", self.queues.get(&q_name));
         Ok(())
     }
 
-    pub fn pop(&mut self, q_name: String) -> Result<()> {
-        self.queues.remove(&q_name).context("Invalid queue name, queue not found")?;
-        Ok(())
+    pub fn pop(&mut self, q_name: &str) -> Option<String> {
+        self.queues
+            .entry(q_name.to_string())
+            .or_default()
+            .pop_back()
     }
 }
