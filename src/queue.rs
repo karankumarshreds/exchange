@@ -6,13 +6,13 @@ use std::{
 
 // client -> (queue_name) -> (collect client)
 
-pub struct Queue {
+pub struct QState {
     queues: HashMap<String, VecDeque<String>>,
 }
 
-impl Queue {
-    pub fn new() -> Queue {
-        return Queue {
+impl QState {
+    pub fn new() -> Self {
+        return Self {
             queues: HashMap::new(),
         };
     }

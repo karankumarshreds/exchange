@@ -1,16 +1,38 @@
-#[allow(unused)]
-pub enum MessageType {
-    Send,
-    Recv,
-    Conn,
+type XName = String;
+type QName = String;
+
+#[derive(Debug,Default)]
+pub struct ConnPayload {
+    pub x_name: XName,
+    pub q_name: QName,
 }
 
-pub fn msg_type(msg_type: MessageType) -> &'static str {
+#[derive(Debug)]
+pub struct SendPayload {
+    pub x_name: XName,
+    pub data: String,
+    pub x_type: char, // 'f': fanout, 'd': direct
+}
+
+#[derive(Debug)]
+pub struct RecvPaylod {
+    pub q_name: QName,
+}
+
+pub enum RequestType {
+    Connection(ConnPayload),
+    Producer(SendPayload),
+    Consumer(RecvPaylod),
+}
+
+
+pub fn msg_type(msg_type: RequestType) -> &'static str {
     match msg_type {
-        MessageType::Send => "s",
-        MessageType::Recv => "r",
-        MessageType::Conn => "c",
+        RequestType::Producer(_) => "s",
+        RequestType::Consumer(_) => "r",
+        RequestType::Connection(_) => "c",
     }
 }
 
 pub const Q_NAME: &'static str = "queue-test";
+pub const X_NAME: &'static str = "exchange-test";

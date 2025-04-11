@@ -2,7 +2,7 @@ use core::time;
 use std::{thread, time::Duration};
 use tokio::io::AsyncWriteExt;
 
-use crate::enums;
+use crate::enums::{msg_type, ConnPayload, RequestType};
 
 pub struct Consumer {
     identifier: &'static str,
@@ -26,7 +26,7 @@ impl Consumer {
             .await
             .expect("Should connect");
         let mut header = Vec::new();
-        let msg_type = enums::msg_type(enums::MessageType::Conn).to_string(); // add the "c" char for connection
+        let msg_type = msg_type(RequestType::Connection(ConnPayload::default())); // add the "c" char for connection
         header.extend_from_slice(msg_type.as_bytes()); // msg_type as a single char -> 1 byte
         header.extend_from_slice(&(self.identifier.len() as i32).to_be_bytes()); // add the q_name length
         header.extend_from_slice(self.identifier.as_bytes()); // add the indentifier

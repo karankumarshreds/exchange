@@ -1,0 +1,1 @@
+- The stack size of a thread can easily reach upto 10-100 Kbs, so multiple threads (if spawned without thinking much) can lead to alot of memory usage and becomes very expensive (especially if they're sitting idle, say waiting on a tcp connection).
